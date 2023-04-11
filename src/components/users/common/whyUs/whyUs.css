@@ -1,0 +1,33 @@
+.why-us ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+
+.why-us li::before {
+    content: "\2022";
+    color: var(--color1);
+    font-size: 2rem;
+    font-weight: bold;
+    left: 0;
+    top: -8px;
+    position: absolute;
+
+}
+
+
+.why-us li {
+    color: gray;
+    font-weight: 400;
+    position: relative;
+}
+
+
+.why-us li span {
+    color: #424242;
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+

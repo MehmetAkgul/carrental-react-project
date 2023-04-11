@@ -1,0 +1,10 @@
+.contact-info .contact-bar {
+    flex-direction: column;
+    gap: 3rem;
+    margin-top: 2.5rem;
+}
+
+.contact-info .contact-bar a,
+.contact-info .contact-bar li div {
+    color: black;
+}

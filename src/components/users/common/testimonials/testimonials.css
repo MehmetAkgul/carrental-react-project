@@ -1,0 +1,42 @@
+.testimonials {
+    background-image: url("../../../../assets/img/bg/testimonial-bg.jpg");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    padding: 5rem;
+    position: relative;
+    color: #c6c6c6;
+}
+
+.testimonials::after {
+    content: "";
+    position: absolute;
+    background-color: var(--color2);
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    opacity: 0.8;
+}
+
+.testimonials h3 {
+    position: relative;
+    color: white;
+    z-index: 10;
+    display: inline-block;
+    margin-bottom: 2rem;
+
+}
+
+.testimonials h3::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -5px;
+    border-radius: 0.2rem;
+    width: 50%;
+    height: 5px;
+    background-color: var(--color1);
+
+}
+

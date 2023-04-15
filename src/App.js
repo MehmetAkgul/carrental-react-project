@@ -1,21 +1,28 @@
 import React, {useEffect, useState} from 'react';
 import CustomRoutes from "./router/customRoutes";
 import {ToastContainer} from "react-toastify";
-import { useStore} from "./stores";
+import {useStore} from "./stores";
 import {getUser} from "./api/userService";
 import {loginSuccess} from "./stores/user/userActions";
 import LoadingPage from "./pages/users/LoadingPage";
+import {getVehicle} from "./api/vehicleService";
+import {setVehicles} from "./stores/vehicle/vehicleActionsState";
 
 
 function App() {
 
     const [loading, setLoading] = useState(true);
-    const {dispatchUser} = useStore();
+    const {dispatchUser, dispatchVehicle} = useStore();
 
     const loadData = async () => {
         try {
-            const resp = await getUser();
+            let resp = await getUser();
             dispatchUser(loginSuccess(resp.data));
+
+            resp = await getVehicle()
+            dispatchVehicle(setVehicles(resp.data))
+
+
             setLoading(false);
         } catch (e) {
             console.log(e)

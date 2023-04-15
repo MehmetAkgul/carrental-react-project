@@ -1,14 +1,14 @@
-import React, {useState} from 'react';
-import {Button, Form, Spinner} from "react-bootstrap";
+import React, { useState } from "react";
+import { Button, Form, Spinner } from "react-bootstrap";
 import Spacer from "../common/spacer/spacer";
-import * as Yup from "yup"
-import InputMask from 'react-input-mask'
-import {useFormik} from "formik";
-import {register} from "../../../api/userService";
-import {toast} from "react-toastify";
+import * as Yup from "yup";
+import ReactInputMask from "react-input-mask-next";
+import { useFormik } from "formik";
+import { register } from "../../../api/userService";
+import { toast } from "react-toastify";
+import PasswordInput from "../common/password-input/password-input";
 
 const RegisterForm = ({setDefaultTab}) => {
-
     const [loading, setLoading] = useState(false);
 
     const initialValues = {
@@ -20,53 +20,63 @@ const RegisterForm = ({setDefaultTab}) => {
         email: "",
         password: "",
         confirmPassword: "",
-    }
+    };
+
     const validationSchema = Yup.object({
-        firstName: Yup.string().required("Please Enter Your First Name") .min(4, "Must be at least 4 character"),
-        lastName: Yup.string().required("Please Enter Your Last Name") .min(4, "Must be at least 4 character"),
+        firstName: Yup.string().required("Please enter your first name"),
+        lastName: Yup.string().required("Please enter your last name"),
         phoneNumber: Yup.string()
-            .required("Please Enter Your Phone Number")
-            .test("includes_", "Please Enter Your Phone Number", (value) =>
-                value && !value.includes("_")
+            .required()
+            .test(
+                "includes_",
+                "Please enter your phone number",
+                (value) => value && !value.includes("_")
             ),
-        address: Yup.string().required("Please Enter Your Address") .min(16, "Must be at least 16 character"),
-        email: Yup.string().email().required("Please Enter Your Email"),
-        zipCode: Yup.string().required("Please Enter Your Zip Code").min(4, "Must be at least 4 character"),
-        password: Yup.string().required("Please Enter Your Password")
-            .min(8, "Must be at least 8 character")
+        address: Yup.string().required("Please enter your address"),
+        zipCode: Yup.string().required("Please enter your zip code"),
+        email: Yup.string().email().required("Please enter your email"),
+        password: Yup.string()
+            .required("Please enter your password")
+            .min(8, "Must be at least 8 characters")
             .matches(/[a-z]+/, "One lowercase character")
             .matches(/[A-Z]+/, "One uppercase character")
-            .matches(/[@$%ˆ&*]+/, "One special character")
+            .matches(/[@$!%*#?&]+/, "One special character")
             .matches(/\d+/, "One number"),
-        confirmPassword: Yup.string().required("Please Re-Enter Your Password")
-            .oneOf([Yup.ref("password")], "Password fields doesn't match")
-    })
+        confirmPassword: Yup.string()
+            .required("Please re-enter your password")
+            .oneOf([Yup.ref("password")], "Password fields doesn't match"),
+    });
 
     const onSubmit = async (values) => {
         setLoading(true);
+
         try {
-            const resp = await register(values)
-            toast("You are registered successfully")
-            setDefaultTab("login")
+            const resp = await register(values);
+            toast("You are registered successfully");
             setLoading(false);
-        } catch (e) {
-            console.log(e)
-            toast(e.response.data.message)
-            setLoading(false)
+            formik.resetForm();
+            setDefaultTab("login");
+        } catch (err) {
+            toast(err.response.data.message);
+            setLoading(false);
         }
-    }
+    };
 
     const formik = useFormik({
-        initialValues, validationSchema, onSubmit,
-    })
+        initialValues,
+        validationSchema,
+        onSubmit,
+    });
+
     return (
         <Form noValidate onSubmit={formik.handleSubmit}>
             <Form.Group className="mb-3">
                 <Form.Label>First Name</Form.Label>
-                <Form.Control type="text"
-                              {...formik.getFieldProps("firstName")}
-                              isInvalid={formik.touched.firstName && formik.errors.firstName}
-                              isvalid={formik.touched.firstName && !formik.errors.firstName}
+                <Form.Control
+                    type="text"
+                    {...formik.getFieldProps("firstName")}
+                    isInvalid={formik.touched.firstName && formik.errors.firstName}
+                    isValid={formik.touched.firstName && !formik.errors.firstName}
                 />
                 <Form.Control.Feedback type="invalid">
                     {formik.errors.firstName}
@@ -74,96 +84,85 @@ const RegisterForm = ({setDefaultTab}) => {
             </Form.Group>
             <Form.Group className="mb-3">
                 <Form.Label>Last Name</Form.Label>
-                <Form.Control type="text"
-                              {...formik.getFieldProps("lastName")}
-                              isInvalid={formik.touched.lastName && formik.errors.lastName}
-                              isvalid={formik.touched.lastName && !formik.errors.lastName}
+                <Form.Control
+                    type="text"
+                    {...formik.getFieldProps("lastName")}
+                    isInvalid={formik.touched.lastName && formik.errors.lastName}
+                    isValid={formik.touched.lastName && !formik.errors.lastName}
                 />
                 <Form.Control.Feedback type="invalid">
                     {formik.errors.lastName}
                 </Form.Control.Feedback>
-
             </Form.Group>
             <Form.Group className="mb-3">
                 <Form.Label>Phone Number</Form.Label>
-                <Form.Control type="text" as={InputMask} mask="(999) 999-9999"
-                              {...formik.getFieldProps("phoneNumber")}
-                              isInvalid={formik.touched.phoneNumber && formik.errors.phoneNumber}
-                              isvalid={formik.touched.phoneNumber && !formik.errors.phoneNumber}
+                <Form.Control
+                    type="text"
+                    as={ReactInputMask}
+                    mask="(999) 999-9999"
+                    {...formik.getFieldProps("phoneNumber")}
+                    isInvalid={formik.touched.phoneNumber && formik.errors.phoneNumber}
+                    isValid={formik.touched.phoneNumber && !formik.errors.phoneNumber}
                 />
                 <Form.Control.Feedback type="invalid">
                     {formik.errors.phoneNumber}
                 </Form.Control.Feedback>
-
             </Form.Group>
             <Form.Group className="mb-3">
                 <Form.Label>Address</Form.Label>
-                <Form.Control type="text"
-                              {...formik.getFieldProps("address")}
-                              isInvalid={formik.touched.address && formik.errors.address}
-                              isvalid={formik.touched.address && !formik.errors.address}
+                <Form.Control
+                    type="text"
+                    {...formik.getFieldProps("address")}
+                    isInvalid={formik.touched.address && formik.errors.address}
+                    isValid={formik.touched.address && !formik.errors.address}
                 />
                 <Form.Control.Feedback type="invalid">
                     {formik.errors.address}
                 </Form.Control.Feedback>
-
             </Form.Group>
             <Form.Group className="mb-3">
                 <Form.Label>Zip Code</Form.Label>
-                <Form.Control type="number"
-                              {...formik.getFieldProps("zipCode")}
-                              isInvalid={formik.touched.zipCode && formik.errors.zipCode}
-                              isvalid={formik.touched.zipCode && !formik.errors.zipCode}
+                <Form.Control
+                    type="text"
+                    {...formik.getFieldProps("zipCode")}
+                    isInvalid={formik.touched.zipCode && formik.errors.zipCode}
+                    isValid={formik.touched.zipCode && !formik.errors.zipCode}
                 />
                 <Form.Control.Feedback type="invalid">
                     {formik.errors.zipCode}
                 </Form.Control.Feedback>
-
             </Form.Group>
 
-            <Spacer height={20}/>
-            <hr/>
-            <Spacer height={20}/>
+            <Spacer height={20} />
+            <hr />
+            <Spacer height={20} />
 
             <Form.Group className="mb-3">
                 <Form.Label>Email address</Form.Label>
-                <Form.Control type="email"
-                              {...formik.getFieldProps("email")}
-                              isInvalid={formik.touched.email && formik.errors.email}
-                              isvalid={formik.touched.email && !formik.errors.email}
+                <Form.Control
+                    type="email"
+                    {...formik.getFieldProps("email")}
+                    isInvalid={formik.touched.email && formik.errors.email}
+                    isValid={formik.touched.email && !formik.errors.email}
                 />
                 <Form.Control.Feedback type="invalid">
                     {formik.errors.email}
                 </Form.Control.Feedback>
-
             </Form.Group>
-
             <Form.Group className="mb-3">
                 <Form.Label>Password</Form.Label>
-                <Form.Control type="password"
-                              {...formik.getFieldProps("password")}
-                              isInvalid={formik.touched.password && formik.errors.password}
-                              isvalid={formik.touched.password && !formik.errors.password}
-                />
-                <Form.Control.Feedback type="invalid">
-                    {formik.errors.password}
-                </Form.Control.Feedback>
-
+                <PasswordInput {...formik.getFieldProps("password")}
+                               isInvalid={formik.touched.password && formik.errors.password}
+                               isValid={formik.touched.password && !formik.errors.password}
+                               error={formik.errors.password}/>
             </Form.Group>
-
             <Form.Group className="mb-3">
                 <Form.Label>Password Confirm</Form.Label>
-                <Form.Control type="password"
-                              {...formik.getFieldProps("confirmPassword")}
-                              isInvalid={formik.touched.confirmPassword && formik.errors.confirmPassword}
-                              isvalid={formik.touched.confirmPassword && !formik.errors.confirmPassword}
-                />
-                <Form.Control.Feedback type="invalid">
-                    {formik.errors.confirmPassword}
-                </Form.Control.Feedback>
-
+                <PasswordInput {...formik.getFieldProps("confirmPassword")}
+                               isInvalid={formik.touched.confirmPassword && formik.errors.confirmPassword}
+                               isValid={formik.touched.confirmPassword && !formik.errors.confirmPassword}
+                               error={formik.errors.confirmPassword}/>
             </Form.Group>
-
             <Button variant="primary" type="submit" disabled={loading}>
                 {loading && <Spinner animation="border" size="sm" />} Register
             </Button>
